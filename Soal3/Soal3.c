@@ -2,10 +2,15 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wait.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <string.h>
 
 int main() {
-  pid_t child_id1, child_id2, child_id3, child_id4, child_id5, child_id6;
+  pid_t child_id1, child_id2, child_id3, child_id4, child_id5, child_id6, child_id7, child_id8;
   int status;
+  char ch[100];
+  FILE *destination;
 
   child_id1 = fork();
 
@@ -18,36 +23,63 @@ int main() {
         if (child_id4 == 0) {
           child_id5 = fork();
           if (child_id5 == 0) {
-            child_id6 = fork();
-            if(child_id6 == 0) {
-              char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/indomie", NULL};
-              execv("/bin/mkdir", argv);
-            }else {
-              while ((wait(&status)) > 0);
-              sleep(5);
-              char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/sedaap", NULL};
-              execv("/bin/mkdir", argv);
-            }
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/indomie", NULL};
+            execv("/bin/mkdir", argv);
           }else {
             while ((wait(&status)) > 0);
-            char *argv[] = {"unzip", "jpg.zip", NULL};
-            execv("/usr/bin/unzip", argv);
+            sleep(5);
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/sedaap", NULL};
+            execv("/bin/mkdir", argv);
           }
         }else {
           while ((wait(&status)) > 0);
-          char *argv[] = {"bash", "mv.sh" , NULL};
-          execv("/bin/bash", argv);
-        }  
+          char *argv[] = {"unzip", "jpg.zip", NULL};
+          execv("/usr/bin/unzip", argv);
+        }
       }else {
         while ((wait(&status)) > 0);
-        char *argv[] = {"bash", "mvfile.sh" , NULL};
+        char *argv[] = {"bash", "mv.sh" , NULL};
         execv("/bin/bash", argv);
-      }
+      }  
     }else {
       while ((wait(&status)) > 0);
-      char *argv[] = {"bash", "mvdir.sh" , NULL};
+      char *argv[] = {"bash", "mvfile.sh" , NULL};
       execv("/bin/bash", argv);
     }
-  }
-          
+  }else {
+    while ((wait(&status)) > 0);
+    chdir("/home/dicki/modul2/jpg/");
+    struct dirent *de;
+    DIR *dr = opendir(".");
+    while ((de = readdir(dr)) != NULL){
+      if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+        continue;
+      child_id6 = fork();
+      if (child_id6 == 0) {
+        child_id7 = fork();
+        if (child_id7 == 0) {
+          child_id8 = fork();
+          if (child_id8 == 0) {
+            sprintf(ch, "/home/dicki/modul2/jpg/%s", de->d_name);
+            char *argv[] = {"mv", ch, "/home/dicki/modul2/indomie/", NULL};
+            execv("/bin/mv", argv);
+          }else {
+            while ((wait(&status)) > 0);
+            sprintf(ch, "/home/dicki/modul2/indomie/%s/coba1.txt", de->d_name);
+            destination = fopen(ch, "w+");
+            fclose(destination);
+          }
+        }else {
+          while ((wait(&status)) > 0);
+          sleep(3);
+          sprintf(ch, "/home/dicki/modul2/indomie/%s/coba2.txt", de->d_name);
+          destination = fopen(ch, "w+");
+          fclose(destination);
+          exit(0);
+        } 
+      }else {
+        while ((wait(&status)) > 0);        
+      }
+    }
+  }  
 }
