@@ -97,3 +97,205 @@ Catatan :
 - Tidak boleh memakai function C mkdir() ataupun rename().
 - Gunakan exec dan fork
 - Direktori “.” dan “..” tidak termasuk
+
+### SOLUSI
+Untuk source code dapat diihat dibawah ini:
+```c
+#include <stdlib.h>
+#include <sys/types.h>
+#include <unistd.h>
+#include <wait.h>
+#include <dirent.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/stat.h>
+
+int main() {
+  pid_t child_id1, child_id2, child_id3, child_id4, child_id5, child_id6, child_id7, child_id8;
+  int status;
+  char ch[100];
+  FILE *destination;
+  struct stat check;
+
+  child_id1 = fork();
+
+  if (child_id1 == 0) {
+    child_id2 = fork();
+    if (child_id2 == 0) {
+      child_id3 = fork();
+      if (child_id3 == 0) {
+        child_id4 = fork();
+        if (child_id4 == 0) {
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/indomie", NULL};
+            execv("/bin/mkdir", argv);
+          }else {
+            while ((wait(&status)) > 0);
+            sleep(5);
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/sedaap", NULL};
+            execv("/bin/mkdir", argv);
+          }
+        }else {
+          while ((wait(&status)) > 0);
+          char *argv[] = {"unzip", "jpg.zip", NULL};
+          execv("/usr/bin/unzip", argv);
+        }
+      }else {
+        while ((wait(&status)) > 0);
+        sprintf(ch, "/home/dicki/Praktikum/Praktikum2/jpg");
+        char *argv[] = {"mv", ch, "/home/dicki/modul2", NULL};
+        execv("/bin/mv", argv);
+      }  
+    }else {
+      while ((wait(&status)) > 0);
+      chdir("/home/dicki/modul2/jpg/");
+      struct dirent *de;
+      DIR *dr = opendir(".");
+      while ((de = readdir(dr)) != NULL){
+        if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+          continue;
+        child_id6 = fork();
+        if (child_id6 == 0) {
+          child_id7 = fork();
+          if (child_id7 == 0) {
+            child_id8 = fork();
+            if (child_id8 == 0) {
+              if (stat(de->d_name,&check) == 0){
+                if (check.st_mode & S_IFDIR) {
+                  sprintf(ch, "/home/dicki/modul2/jpg/%s", de->d_name);
+                  char *argv[] = {"mv", ch, "/home/dicki/modul2/indomie", NULL};
+                  execv("/bin/mv", argv);
+                }else {
+                  while ((wait(&status)) > 0);
+                  sprintf(ch, "/home/dicki/modul2/jpg/%s", de->d_name);
+                  char *argv[] = {"mv", ch, "/home/dicki/modul2/sedaap" , NULL};
+                  execv("/bin/mv", argv);
+                } 
+              }
+            }else {
+                while ((wait(&status)) > 0);
+                sprintf(ch, "/home/dicki/modul2/indomie/%s/coba1.txt", de->d_name);
+                destination = fopen(ch, "w+");
+                fclose(destination);
+            }
+          }else {
+            while ((wait(&status)) > 0);
+            sleep(3);
+            sprintf(ch, "/home/dicki/modul2/indomie/%s/coba2.txt", de->d_name);
+            destination = fopen(ch, "w+");
+            fclose(destination);
+          }
+        }else {
+          while ((wait(&status)) > 0);    
+        }
+      }
+      close(dr);
+    }
+}
+```
+
+Pada bagian (a) diminta untuk membuat dua direktori di `/home/[USER]/modul2/` dengan 
+nama `indomie` dan `sedaap`. Pertama dilakukan fork sebanyak empat kali untuk nantinya
+digunakan pada proses selanjutnya. Pada child proccess ke-4, diproses pembuatan direktori
+dengan nama direktori `indomie`, dan pada parent proccess ke-4, diproses pembuatan direktori
+dengan nama direktori `sedaap` selang lima detik setekah pembuatan direktori `indomie`.
+```c
+child_id1 = fork();
+  if (child_id1 == 0) {
+    child_id2 = fork();
+    if (child_id2 == 0) {
+      child_id3 = fork();
+      if (child_id3 == 0) {
+        child_id4 = fork();
+        if (child_id4 == 0) {
+          // child_id5 = fork();
+          // if (child_id5 == 0) {
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/indomie", NULL};
+            execv("/bin/mkdir", argv);
+          }else {
+            while ((wait(&status)) > 0);
+            sleep(5);
+            char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/sedaap", NULL};
+            execv("/bin/mkdir", argv);
+          }
+```
+
+Pada bagian (b) diminta untuk meng-ekstrak file `jpg.zip` di direktori `/home/[USER]/modul2/`.
+Pada parent proccess ke-3, dilakukan proses unzip terhadap file `jpg.zip`. Kemudian hasil
+ekstrak akan dipindahkan ke direktori `/home/dicki/modul2/` pada parent proccess ke-2.
+```c
+}else {
+          while ((wait(&status)) > 0);
+          char *argv[] = {"unzip", "jpg.zip", NULL};
+          execv("/usr/bin/unzip", argv);
+        }
+      }else {
+        while ((wait(&status)) > 0);
+        sprintf(ch, "/home/dicki/Praktikum/Praktikum2/jpg");
+        char *argv[] = {"mv", ch, "/home/dicki/modul2", NULL};
+        execv("/bin/mv", argv);
+      }
+```
+
+Pada bagaian (c) diminta untuk memindahakn isi dari direktori `jpg` ke direktori `indomie`
+dan `sedaap`, dimana semua file harus dipindahkan ke direktori `/home/[USER]/modul2/sedaap/`
+dan semua direktori harus dipindahkan ke direktori `/home/[USER]/modul2/indomie/`. Pada parent
+proccess pertama, akan dilakukan proses fork kembali untuk memproses direktori `jpg`.
+Direktori `jpg` akan diakses dengan `opendir`, dan prosesnya akan terus berjalan selama
+direktori tidak `NULL`. Karena direktori `.` dan `..` tidak termasuk, maka kita cek terlebih
+dahulu. Pada child proccess `child_id8` dilakukan pengecekan untuk ekstensi dari file tersebut.
+Jika itu direktori, maka nantinya akan dipindah ke direktori `indomie`. Jika bukan direktori,
+maka akan dipindah ke direktori `sedaap`.
+```c
+}else {
+      while ((wait(&status)) > 0);
+      chdir("/home/dicki/modul2/jpg/");
+      struct dirent *de;
+      DIR *dr = opendir(".");
+      while ((de = readdir(dr)) != NULL){
+        if (strcmp(de->d_name, ".") == 0 || strcmp(de->d_name, "..") == 0)
+          continue;
+        child_id6 = fork();
+        if (child_id6 == 0) {
+          child_id7 = fork();
+          if (child_id7 == 0) {
+            child_id8 = fork();
+            if (child_id8 == 0) {
+              if (stat(de->d_name,&check) == 0){
+                if (check.st_mode & S_IFDIR) {
+                  sprintf(ch, "/home/dicki/modul2/jpg/%s", de->d_name);
+                  char *argv[] = {"mv", ch, "/home/dicki/modul2/indomie", NULL};
+                  execv("/bin/mv", argv);
+                }else {
+                  while ((wait(&status)) > 0);
+                  sprintf(ch, "/home/dicki/modul2/jpg/%s", de->d_name);
+                  char *argv[] = {"mv", ch, "/home/dicki/modul2/sedaap" , NULL};
+                  execv("/bin/mv", argv);
+                } 
+              }
+```
+
+Pada bagian (d), diminta untuk mengisi setiap direktori yang dipindahkan ke direktori
+`indomie` dengan file kosong, yaitu `coba1.txt` dan `coba2.txt`. Dimana syaratnya `coba2.txt`
+akan dibuat setelah tiga detik berselang setelah dibuatnya `coba1.txt`.
+```c
+            }else {
+                while ((wait(&status)) > 0);
+                sprintf(ch, "/home/dicki/modul2/indomie/%s/coba1.txt", de->d_name);
+                destination = fopen(ch, "w+");
+                fclose(destination);
+            }
+          }else {
+            while ((wait(&status)) > 0);
+            sleep(3);
+            sprintf(ch, "/home/dicki/modul2/indomie/%s/coba2.txt", de->d_name);
+            destination = fopen(ch, "w+");
+            fclose(destination);
+          }
+        }else {
+          while ((wait(&status)) > 0);    
+        }
+      }
+      close(dr);
+    }
+}
+```
