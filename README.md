@@ -195,8 +195,8 @@ int main() {
 
 Pada bagian (a) diminta untuk membuat dua direktori di `/home/[USER]/modul2/` dengan 
 nama `indomie` dan `sedaap`. Pertama dilakukan fork sebanyak empat kali untuk nantinya
-digunakan pada proses selanjutnya. Pada child proccess ke-4, diproses pembuatan direktori
-dengan nama direktori `indomie`, dan pada parent proccess ke-4, diproses pembuatan direktori
+digunakan pada proses selanjutnya. Pada child process ke-4, diproses pembuatan direktori
+dengan nama direktori `indomie`, dan pada parent process ke-4, diproses pembuatan direktori
 dengan nama direktori `sedaap` selang lima detik setekah pembuatan direktori `indomie`.
 ```c
 child_id1 = fork();
@@ -221,7 +221,7 @@ child_id1 = fork();
 
 Pada bagian (b) diminta untuk meng-ekstrak file `jpg.zip` di direktori `/home/[USER]/modul2/`.
 Pada parent proccess ke-3, dilakukan proses unzip terhadap file `jpg.zip`. Kemudian hasil
-ekstrak akan dipindahkan ke direktori `/home/dicki/modul2/` pada parent proccess ke-2.
+ekstrak akan dipindahkan ke direktori `/home/dicki/modul2/` pada parent process ke-2.
 ```c
 }else {
           while ((wait(&status)) > 0);
@@ -239,10 +239,10 @@ ekstrak akan dipindahkan ke direktori `/home/dicki/modul2/` pada parent proccess
 Pada bagaian (c) diminta untuk memindahakn isi dari direktori `jpg` ke direktori `indomie`
 dan `sedaap`, dimana semua file harus dipindahkan ke direktori `/home/[USER]/modul2/sedaap/`
 dan semua direktori harus dipindahkan ke direktori `/home/[USER]/modul2/indomie/`. Pada parent
-proccess pertama, akan dilakukan proses fork kembali untuk memproses direktori `jpg`.
+process pertama, akan dilakukan proses fork kembali untuk memproses direktori `jpg`.
 Direktori `jpg` akan diakses dengan `opendir`, dan prosesnya akan terus berjalan selama
 direktori tidak `NULL`. Karena direktori `.` dan `..` tidak termasuk, maka kita cek terlebih
-dahulu. Pada child proccess `child_id8` dilakukan pengecekan untuk ekstensi dari file tersebut.
+dahulu. Pada child process `child_id8` dilakukan pengecekan untuk ekstensi dari file tersebut.
 Jika itu direktori, maka nantinya akan dipindah ke direktori `indomie`. Jika bukan direktori,
 maka akan dipindah ke direktori `sedaap`.
 ```c
