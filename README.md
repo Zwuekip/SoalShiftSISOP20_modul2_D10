@@ -24,7 +24,7 @@ Contoh: ./program \* 34 7 /home/somi/test.sh
 Program dengan argumen seperti contoh di atas akan menjalankan script test.sh setiap
 detik pada jam 07:34.
 
-## Soal2
+## Soal2 (Belum Selesai)
 Shisoppu mantappu! itulah yang selalu dikatakan Kiwa setiap hari karena sekarang dia
 merasa sudah jago materi sisop. Karena merasa jago, suatu hari Kiwa iseng membuat
 sebuah program.
@@ -65,6 +65,9 @@ Buatlah program dalam mimpi Kiwa jadi nyata!
     - Gunakan fitur picsum.photos untuk mendapatkan gambar dengan ukuran
       tertentu
     - Epoch Unix bisa didapatkan dari time()
+
+### Permasalahan
+Belum dapat menyelesaikan bagian (d) dan (e).
 
 ## Soal3
 Jaya adalah seorang programmer handal mahasiswa informatika. Suatu hari dia
