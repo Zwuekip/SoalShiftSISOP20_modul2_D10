@@ -23,8 +23,6 @@ int main() {
       if (child_id3 == 0) {
         child_id4 = fork();
         if (child_id4 == 0) {
-          // child_id5 = fork();
-          // if (child_id5 == 0) {
             char *argv[] = {"mkdir", "-p", "/home/dicki/modul2/indomie", NULL};
             execv("/bin/mkdir", argv);
           }else {
